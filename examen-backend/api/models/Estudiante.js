@@ -18,7 +18,19 @@ module.exports = {
     fechaNacimiento:{
       type: 'string',
       columnType: 'date'
+    },
+    semestreActual:{
+      type: 'number',
+      columnType: 'int'
+    },
+    graduado:{
+      type: 'boolean',
+    },
+    materias:{
+      collection: 'Materia',
+      via: 'idEstudiante'
     }
+
 
   },
 
