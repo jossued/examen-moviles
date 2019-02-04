@@ -19,7 +19,7 @@ class MateriaHTTP(
     var id: Int? = null
 ) {
 
-    val url = "http://192.168.100.178:1337/Materia"
+    val url = "http://192.168.100.206:1337/Materia"
 
     fun crearMateria() {
 
