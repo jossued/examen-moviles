@@ -5,6 +5,7 @@ import com.beust.klaxon.Klaxon
 import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
+import com.github.kittinunf.fuel.httpPut
 import com.github.kittinunf.result.Result
 
 class EstudianteHttp(
@@ -93,6 +94,42 @@ class EstudianteHttp(
     fun eliminar(id:Int?){
         var urlParam = url+'/'+id
         urlParam.httpDelete()
+            .responseString { request, response, result ->
+
+                when (result) {
+                    is Result.Failure -> {
+                        val exepcion = result.getException()
+                        Log.i("httpres", "Error: ${exepcion}")
+                        Log.i("httpres", "Error: ${response}")
+
+                    }
+                    is Result.Success -> {
+
+                        val usuarioString = result.get()
+
+                        val estudianteClase: EstudianteHttp? = Klaxon()
+                            .parse<EstudianteHttp>(usuarioString)
+
+                        Log.i("httpres", "Datos: ${estudianteClase?.nombres}")
+
+                    }
+                }
+            }
+    }
+
+    fun actualizar(id:Int?){
+        val urlParam = url+'/'+id
+
+        val parametros = listOf(
+            "nombres" to nombres,
+            "apellidos" to apellidos,
+            "fechaNacimiento" to fechaNacimiento,
+            "semestreActual" to semestreActual,
+            "graduado" to graduado
+
+        )
+
+        urlParam.httpPut(parametros)
             .responseString { request, response, result ->
 
                 when (result) {

@@ -24,6 +24,8 @@ class FormularioEstudianteActivity : AppCompatActivity() {
 
         button_estudiante_guardar.setOnClickListener {
             val estudianteFormulario = obtenerParametros()
+
+
             estudianteFormulario.crearEstudiante()
             Alerter.create(this@FormularioEstudianteActivity)
                 .setTitle("Estudiante creado")

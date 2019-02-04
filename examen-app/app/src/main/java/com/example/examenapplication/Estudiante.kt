@@ -2,18 +2,18 @@ package com.example.examenapplication
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
+
 
 class Estudiante(var id:Int, var nombres: String, var apellidos: String,
               var semestreActual: Int,
-              var fechaNacimiento: Date,
-              var graduado: Boolean):Parcelable {
+              var fechaNacimiento: String,
+              var graduado: Boolean): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readSerializable() as Date,
+        parcel.readString(),
         parcel.readByte() != 0.toByte()
     ) {
     }
@@ -23,6 +23,7 @@ class Estudiante(var id:Int, var nombres: String, var apellidos: String,
         parcel.writeString(nombres)
         parcel.writeString(apellidos)
         parcel.writeInt(semestreActual)
+        parcel.writeString(fechaNacimiento)
         parcel.writeByte(if (graduado) 1 else 0)
     }
 
@@ -40,3 +41,4 @@ class Estudiante(var id:Int, var nombres: String, var apellidos: String,
         }
     }
 }
+

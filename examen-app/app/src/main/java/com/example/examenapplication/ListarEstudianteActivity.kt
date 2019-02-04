@@ -56,7 +56,7 @@ class ListarEstudianteActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.estudiantes_menu, menu)
     }
-    /*
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.i("int", "$resultCode")
@@ -70,14 +70,13 @@ class ListarEstudianteActivity : AppCompatActivity() {
 
 
                 Log.i("intent-nombre-apellido", "LLEGOOOO ${data!!.getIntExtra("id", -1)}")
-                Log.i("intent-nombre-apellido", "LLEGOOOO ${data!!.getStringExtra("textoNombre")}")
-                Log.i("intent-nombre-apellido", "LLEGOOOO ${data!!.getStringExtra("textoApellido")}")
-                Log.i("intent-nombre-apellido", "LLEGOOOO ${data!!.getStringExtra("textoEmail")}")
 
-                actualizarUsuario(
-                    data!!.getIntExtra("id", -1), data!!.getStringExtra("textoNombre"),
-                    data!!.getStringExtra("textoApellido"), data!!.getStringExtra("textoEmail")
-                )
+                val estudiante = intent.getParcelableExtra<Estudiante?>("estudiante_actualizar")
+
+
+                if (estudiante != null) {
+                    actualizarUsuario(estudiante)
+                }
 
 
             }
@@ -89,14 +88,15 @@ class ListarEstudianteActivity : AppCompatActivity() {
 
     }
 
-    fun actualizarUsuario(id: Int, textoNombre: String, textoApellido: String, textoEmail: String) {
-
+    fun actualizarUsuario(estudiante: Estudiante) {
+        val estudianteActualizar = EstudianteHttp(estudiante.nombres, estudiante.apellidos, estudiante.fechaNacimiento, estudiante.semestreActual, estudiante.graduado)
+        estudianteActualizar.actualizar(estudiante.id)
     }
 
     companion object {
         val requestCodeActualizar = 101
     }
-    */
+
 }
 
 
@@ -183,8 +183,17 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
             popup.setOnMenuItemClickListener {
                 item ->
                 when (item.getItemId()) {
-                    R.id.editar_estudiante ->
-                         true
+                    R.id.editar_estudiante -> {
+                        val intentEditar = Intent(contexto, FormularioEstudianteActivity::class.java)
+                        Log.i("paso", "${persona.nombres}, ${persona.apellidos}, ${persona.fechaNacimiento}, ${persona.id}")
+//                        intentEditar.putExtra("id_usuario", persona.id)
+
+                        val estudianteActualizar = Estudiante(persona.id!!, persona.nombres, persona.apellidos, persona.semestreActual, persona.fechaNacimiento, persona.graduado)
+
+                        intentEditar.putExtra("estudiante_pasar",estudianteActualizar)
+                        contexto.startActivityForResult(intentEditar, ListarEstudianteActivity.requestCodeActualizar)
+                        true
+                    }
                     R.id.eliminar_estudiante -> {
                         EstudianteHttp().eliminar(persona.id)
                         listaPersonas.removeAt(position)
