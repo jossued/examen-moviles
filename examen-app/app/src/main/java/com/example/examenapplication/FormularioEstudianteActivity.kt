@@ -16,18 +16,17 @@ class FormularioEstudianteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario_estudiante)
 
-        val url = "http://localhost:1337/Estudiante"
+        val url = "http://192.168.100.206:1337/Estudiante"
+
+        intent = Intent(this, MainActivity::class.java)
 
         button_estudiante_cancelar.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
+
             this.startActivity(intent)
             this.finish()
         }
 
         button_estudiante_guardar.setOnClickListener {
-
-
-
             crearEstudiante(url)
             this.startActivity(intent)
             this.finish()
@@ -35,7 +34,7 @@ class FormularioEstudianteActivity : AppCompatActivity() {
 
     }
 
-    fun obtenerParametros():EstudianteHttp{
+    fun obtenerParametros(): EstudianteHttp {
 
         val nombres = editText_estudiante_nombres.text.toString()
         val apellidos = editText_estudiante_apellidos.text.toString()
@@ -59,6 +58,8 @@ class FormularioEstudianteActivity : AppCompatActivity() {
 
         )
 
+        Log.i("httpres", parametros.toString())
+
         url
             .httpPost(parametros)
             .responseString { request, response, result ->
@@ -66,8 +67,8 @@ class FormularioEstudianteActivity : AppCompatActivity() {
                 when (result) {
                     is Result.Failure -> {
                         val exepcion = result.getException()
-                        Log.i("http", "Error: ${exepcion}")
-                        Log.i("http", "Error: ${response}")
+                        Log.i("httpres", "Error: ${exepcion}")
+                        Log.i("httpres", "Error: ${response}")
 
                     }
                     is Result.Success -> {
@@ -77,7 +78,7 @@ class FormularioEstudianteActivity : AppCompatActivity() {
                         val estudianteClase: EstudianteHttp? = Klaxon()
                             .parse<EstudianteHttp>(usuarioString)
 
-                        Log.i("http", "Datos: ${estudianteClase?.nombres}")
+                        Log.i("httpres", "Datos: ${estudianteClase?.nombres}")
 
                     }
                 }
