@@ -13,10 +13,18 @@ class MainActivity : AppCompatActivity() {
         button_crear_estudiante.setOnClickListener {
             this.irACrearEstudiante()
         }
+        button_listar_estudiante.setOnClickListener {
+            this.irAListarEstudiante()
+        }
     }
 
     fun irACrearEstudiante(){
         intent = Intent(this, FormularioEstudianteActivity::class.java)
+        this.startActivity(intent)
+    }
+
+    fun irAListarEstudiante(){
+        intent = Intent(this, ListarEstudianteActivity::class.java)
         this.startActivity(intent)
     }
 }
