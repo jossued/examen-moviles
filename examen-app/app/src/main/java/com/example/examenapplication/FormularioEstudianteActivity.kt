@@ -49,12 +49,13 @@ class FormularioEstudianteActivity : AppCompatActivity() {
                     .show()
             } else if (estudianteActualizar != null) {
 
-                /*
+
                 val estudianteActualizado = obtenerParametros()
 
                 devolverActualizar(estudianteActualizar, estudianteActualizado)
-                */
 
+
+                /*
                 estudianteFormulario.actualizar(estudianteActualizar.id)
                 Alerter.create(this@FormularioEstudianteActivity)
                     .setTitle("Estudiante actualizado")
@@ -65,6 +66,7 @@ class FormularioEstudianteActivity : AppCompatActivity() {
                         this.finish()
                     }
                     .show()
+                    */
 
             }
 

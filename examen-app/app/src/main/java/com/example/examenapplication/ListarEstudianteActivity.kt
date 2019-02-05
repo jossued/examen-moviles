@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_listar_estudiante.*
 
 import android.widget.PopupMenu
 import com.tapadoo.alerter.Alerter
+//import android.R.attr.data
+import android.text.method.TextKeyListener.clear
+
+
 
 //import android.R
 
@@ -31,6 +35,7 @@ class ListarEstudianteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_listar_estudiante)
 
         EstudianteHttp().obtenerTodos()
+
         for (estudiante in BDD.estudiantes) {
             Log.i("bdd-", estudiante.nombres)
         }
@@ -48,20 +53,10 @@ class ListarEstudianteActivity : AppCompatActivity() {
 
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo
-    ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-
-        val inflater = menuInflater
-        inflater.inflate(R.menu.estudiantes_menu, menu)
-    }
-
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.i("int", "$resultCode")
+
 
         when (resultCode) {
             Activity.RESULT_OK -> {
@@ -71,18 +66,19 @@ class ListarEstudianteActivity : AppCompatActivity() {
                 Log.i("int", "$data")
 
 
-                Log.i("intent-nombre-apellido", "LLEGOOOO ${intent.getParcelableExtra<Estudiante?>("estudiante_pasar")}")
+                Log.i("intent-nombre-apellido", "LLEGOOOO ${data!!.getParcelableExtra<Estudiante?>("estudiante_pasar")}")
 
-                val estudiante = intent.getParcelableExtra<Estudiante?>("estudiante_pasar")
+                val estudiante = data!!.getParcelableExtra<Estudiante?>("estudiante_pasar")
 
 
                 if (estudiante != null) {
                     actualizarUsuario(estudiante)
                     Alerter.create(this@ListarEstudianteActivity)
-                        .setTitle("Estudiante creado")
+                        .setTitle("Estudiante actualizado")
                         .setText("Nombre:  ${estudiante.nombres}")
                         .show()
                 }
+
 
 
             }
@@ -91,6 +87,20 @@ class ListarEstudianteActivity : AppCompatActivity() {
                 Log.i("error", "Error")
             }
         }
+//
+//        EstudianteHttp().obtenerTodos()
+//
+//        val layoutManager = LinearLayoutManager(this)
+//        val rv = rview_estudiantes
+//
+//        val adaptador = PersonasAdaptador(BDD.estudiantes, this)
+//
+//        rview_estudiantes.layoutManager = layoutManager
+//        rview_estudiantes.itemAnimator = DefaultItemAnimator()
+//        rview_estudiantes.adapter = adaptador
+//
+//        adaptador.notifyDataSetChanged()
+
 
     }
 
@@ -112,14 +122,13 @@ class ListarEstudianteActivity : AppCompatActivity() {
 }
 
 
-class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private val contexto: ListarEstudianteActivity) :
+class PersonasAdaptador(var listaPersonas: ArrayList<EstudianteHttp>, private val contexto: ListarEstudianteActivity) :
     RecyclerView.Adapter<PersonasAdaptador.MyViewHolder>() {
 
 
     // val intentEditar = intent
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
 
         var nombreTextView: TextView
         var apellidoTextView: TextView

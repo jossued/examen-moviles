@@ -2,15 +2,14 @@ package com.example.examenapplication
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
+
 
 class Materia(var id:Int, var codigoBarra: Int, var nombre: String,
               var codigo: Int,
               var descripcion: String,
               var activo: Boolean,
-              var fechaCreacion: Date,
-              var numeroHorasPorSemana: Int,
-              var idEstudiante: Int):Parcelable {
+              var fechaCreacion: String,
+              var numeroHorasPorSemana: Int):Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
@@ -18,8 +17,7 @@ class Materia(var id:Int, var codigoBarra: Int, var nombre: String,
         parcel.readInt(),
         parcel.readString(),
         parcel.readByte() != 0.toByte(),
-        parcel.readSerializable() as Date,
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readInt()
     ) {
     }
@@ -31,8 +29,8 @@ class Materia(var id:Int, var codigoBarra: Int, var nombre: String,
         parcel.writeInt(codigo)
         parcel.writeString(descripcion)
         parcel.writeByte(if (activo) 1 else 0)
+        parcel.writeString(fechaCreacion)
         parcel.writeInt(numeroHorasPorSemana)
-        parcel.writeInt(idEstudiante)
     }
 
     override fun describeContents(): Int {
