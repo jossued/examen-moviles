@@ -10,7 +10,8 @@ module.exports = {
   attributes: {
 
     codigoBarra:{
-      type: 'string'
+      type: 'number',
+      columnType: 'int'
     },
     nombre: {
       type: 'string'
