@@ -1,17 +1,15 @@
 package com.example.examenapplication
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.tapadoo.alerter.Alerter
-import com.tapadoo.alerter.OnHideAlertListener
 
 
 import kotlinx.android.synthetic.main.activity_formulario_estudiante.*
 //import android.support.test.espresso.matcher.ViewMatchers.isChecked
-import android.widget.CheckBox
-
 
 
 class FormularioEstudianteActivity : AppCompatActivity() {
@@ -50,20 +48,50 @@ class FormularioEstudianteActivity : AppCompatActivity() {
                     })
                     .show()
             } else if (estudianteActualizar != null) {
+
+                /*
+                val estudianteActualizado = obtenerParametros()
+
+                devolverActualizar(estudianteActualizar, estudianteActualizado)
+                */
+
                 estudianteFormulario.actualizar(estudianteActualizar.id)
                 Alerter.create(this@FormularioEstudianteActivity)
                     .setTitle("Estudiante actualizado")
                     .setText("Nombre:  ${estudianteFormulario.nombres}")
                     .setDuration(10000)
-                    .setOnHideListener({
-                        regresar()
-                    })
+                    .setOnHideListener {
+                        this.startActivity(Intent(this, ListarEstudianteActivity::class.java))
+                        this.finish()
+                    }
                     .show()
 
             }
 
 
         }
+
+    }
+
+    fun devolverActualizar(estudiantePorActualizar: Estudiante, estudianteActual: EstudianteHttp) {
+
+        estudiantePorActualizar.nombres = estudianteActual.nombres
+        estudiantePorActualizar.semestreActual = estudianteActual.semestreActual
+        estudiantePorActualizar.fechaNacimiento = estudianteActual.fechaNacimiento
+        estudiantePorActualizar.semestreActual = estudianteActual.semestreActual
+        estudiantePorActualizar.graduado = estudianteActual.graduado
+
+        val intentRespuesta = Intent()
+
+        Log.i("estudiante_pasar", "${estudiantePorActualizar.nombres}")
+        intentRespuesta.putExtra("estudiante_pasar", estudiantePorActualizar)
+
+        this.setResult(
+            Activity.RESULT_OK,
+            intentRespuesta
+        )
+
+        this.finish()
 
     }
     fun regresar(){

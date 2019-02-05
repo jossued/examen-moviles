@@ -1,189 +1,111 @@
 package com.example.examenapplication
 
-import android.app.Activity
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_listar_estudiante.*
+import kotlinx.android.synthetic.main.activity_listar_materia.*
 
-import android.widget.PopupMenu
-import com.tapadoo.alerter.Alerter
-
-//import android.R
-
-
-class ListarEstudianteActivity : AppCompatActivity() {
+class ListarMateriaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_listar_estudiante)
+        setContentView(R.layout.activity_listar_materia)
 
-        EstudianteHttp().obtenerTodos()
-        for (estudiante in BDD.estudiantes) {
-            Log.i("bdd-", estudiante.nombres)
+        val estudianteMostrar = intent.getParcelableExtra<Estudiante?>("estudiante_pasar")
+        MateriaHTTP().obtenerPorId(estudianteMostrar!!.id)
+
+        if (estudianteMostrar != null) {
+            Log.i("intent-mostar", estudianteMostrar.nombres)
+            Log.i("intent-mostrar", "${estudianteMostrar.id}")
+            mostrarDatos(estudianteMostrar)
+        }
+
+        for (materia in BDD.materias) {
+            Log.i("bdd-m", materia.nombre)
         }
 
         val layoutManager = LinearLayoutManager(this)
-        val rv = rview_estudiantes
+        val rv = rview_materias
 
-        val adaptador = PersonasAdaptador(BDD.estudiantes, this)
+        val adaptador = MateriasAdaptador(BDD.materias, this)
 
-        rview_estudiantes.layoutManager = layoutManager
-        rview_estudiantes.itemAnimator = DefaultItemAnimator()
-        rview_estudiantes.adapter = adaptador
+        rview_materias.layoutManager = layoutManager
+        rview_materias.itemAnimator = DefaultItemAnimator()
+        rview_materias.adapter = adaptador
 
         adaptador.notifyDataSetChanged()
 
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo
-    ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-
-        val inflater = menuInflater
-        inflater.inflate(R.menu.estudiantes_menu, menu)
+    fun mostrarDatos(estudiante: Estudiante) {
+        textView_nombresE.setText(estudiante.nombres)
+        textView_apellidosE.setText(estudiante.apellidos)
+        textView_fechaNacimiento.setText(estudiante.fechaNacimiento)
+        textView_semestreE.setText(estudiante.semestreActual.toString())
     }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.i("int", "$resultCode")
-
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-
-                Log.i("int", "$requestCode")
-                Log.i("int", "$resultCode")
-                Log.i("int", "$data")
-
-
-                Log.i("intent-nombre-apellido", "LLEGOOOO ${intent.getParcelableExtra<Estudiante?>("estudiante_pasar")}")
-
-                val estudiante = intent.getParcelableExtra<Estudiante?>("estudiante_pasar")
-
-
-                if (estudiante != null) {
-                    actualizarUsuario(estudiante)
-                    Alerter.create(this@ListarEstudianteActivity)
-                        .setTitle("Estudiante creado")
-                        .setText("Nombre:  ${estudiante.nombres}")
-                        .show()
-                }
-
-
-            }
-
-            RESULT_CANCELED -> {
-                Log.i("error", "Error")
-            }
-        }
-
-    }
-
-    fun actualizarUsuario(estudiante: Estudiante) {
-        val estudianteActualizar = EstudianteHttp(
-            estudiante.nombres,
-            estudiante.apellidos,
-            estudiante.fechaNacimiento,
-            estudiante.semestreActual,
-            estudiante.graduado
-        )
-        estudianteActualizar.actualizar(estudiante.id)
-    }
-
-    companion object {
-        val requestCodeActualizar = 101
-    }
-
 }
 
+class MateriasAdaptador(val listaMaterias: ArrayList<MateriaHTTP>, private val contexto: ListarMateriaActivity) :
+    RecyclerView.Adapter<MateriasAdaptador.MyViewHolder2>() {
 
-class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private val contexto: ListarEstudianteActivity) :
-    RecyclerView.Adapter<PersonasAdaptador.MyViewHolder>() {
-
-
-    // val intentEditar = intent
-
-    inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
+    inner class MyViewHolder2(view: View) : RecyclerView.ViewHolder(view) {
 
         var nombreTextView: TextView
-        var apellidoTextView: TextView
-        //        var fechaNacimientoTextView: TextView
+        var codigoTextView: TextView
         var boton_opciones: Button
 
         init {
-            nombreTextView = view.findViewById(R.id.textView_nombre) as TextView
-            apellidoTextView = view.findViewById(R.id.textView_apellido) as TextView
-//            fechaNacimientoTextView = view.findViewById(R.id.textView_fechaNacimiento) as TextView
+            Log.i("debug", "Entro en Holder")
+            nombreTextView = view.findViewById(R.id.textView_nombreMateria) as TextView
+            codigoTextView = view.findViewById(R.id.textView_codigoMateria) as TextView
+            boton_opciones = view.findViewById(R.id.button_opcionesM) as Button
 
-            boton_opciones = view.findViewById(R.id.button_opciones) as Button
-
-            val layout = view.findViewById(R.id.relative_layout_estudiantes) as RelativeLayout
-
-            /*
-            layout
-                .setOnClickListener {
-                    val estudiante = BDD.estudiantes[position]
-                    val intentEditar = Intent(contexto, EditarUsuarioActivity::class.java)
-                    Log.i("paso", "${usuario.nombre}, ${usuario.apellido}, ${usuario.email}, ${usuario.id}")
-                    intentEditar.putExtra("id_usuario", usuario.id)
-
-                    val usuario_pasar = Usuario(usuario.id, usuario.nombre, usuario.apellido, usuario.email)
-                    intentEditar.putExtra("usuario_pasar",usuario_pasar)
-                    // contexto.startActivity(intentEditar)
-                    contexto.startActivityForResult(intentEditar, UsuariosActivity.requestCodeActualizar)
-                    // contexto.finish()
-//                    contexto.recreate()
-
-                }*/
+            val layout = view.findViewById(R.id.relative_layout_materias) as RelativeLayout
 
 
         }
 
 
     }
-
 
     // Definimos el layout
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MyViewHolder {
+    ): MyViewHolder2 {
+        Log.i("debug", "Entro en CreateH")
 
         val itemView = LayoutInflater
             .from(parent.context)
             .inflate(
-                R.layout.lista_estudiantes_rvlayout,
+                R.layout.lista_materias_rvlayout,
                 parent,
                 false
             )
 
-        return MyViewHolder(itemView)
+        return MyViewHolder2(itemView)
     }
 
     // Llenamos los datos del layout
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val persona = listaPersonas[position]
+    override fun onBindViewHolder(holder: MyViewHolder2, position: Int) {
+        val persona = listaMaterias[position]
+        Log.i("debug", "Entro en BindH")
 
-        holder.nombreTextView.setText(persona.nombres)
-        holder.apellidoTextView.setText(persona.apellidos)
-//        holder.fechaNacimientoTextView.setText(persona.fechaNacimiento)
 
+        Log.i("materias", persona.nombre)
+        Log.i("materias", persona.codigo.toString())
+        holder.nombreTextView.setText(persona.nombre)
+        holder.codigoTextView.setText(persona.codigo.toString())
+/*
         holder.boton_opciones.setOnClickListener {
             val popup = PopupMenu(contexto, holder.boton_opciones)
             //inflating menu from xml resource
@@ -226,7 +148,7 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
                                 Alerter.create(contexto)
                                     .setText("Estudiante ${persona.nombres} eliminado")
                                     .show()
-                                listaPersonas.removeAt(position)
+                                listaMaterias.removeAt(position)
                                 notifyDataSetChanged()
 
                             }
@@ -284,11 +206,12 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
 
             popup.show()
         }
-
+*/
     }
-
     override fun getItemCount(): Int {
-        return listaPersonas.size
+        Log.i("debug", "Entro en Size")
+
+        return listaMaterias.size
     }
 
 

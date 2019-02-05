@@ -71,6 +71,8 @@ class EstudianteHttp(
                     }
                     is Result.Success -> {
                         val data = result.get()
+                        Log.i("httpres", "${data}")
+
                         val estudianteArray = Klaxon().parseArray<EstudianteHttp>(data)
                         Log.i("httpres", "Datos: ${estudianteArray?.toString()}")
                         if (estudianteArray != null) {

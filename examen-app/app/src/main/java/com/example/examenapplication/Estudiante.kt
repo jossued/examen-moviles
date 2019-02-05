@@ -3,7 +3,6 @@ package com.example.examenapplication
 import android.os.Parcel
 import android.os.Parcelable
 
-
 class Estudiante(var id:Int, var nombres: String, var apellidos: String,
               var semestreActual: Int,
               var fechaNacimiento: String,
