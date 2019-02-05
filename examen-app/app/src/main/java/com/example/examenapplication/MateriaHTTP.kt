@@ -112,7 +112,7 @@ class MateriaHTTP(
                         val materiaArray = Klaxon().parseArray<MateriaHTTP>(data)
                         Log.i("httpres", "Datos: ${materiaArray?.toString()}")
                         if (materiaArray != null) {
-//                            BDD.materias.clear()
+                            BDD.materias.clear()
                             for ( materia in materiaArray.iterator()){
                                 Log.i("httpres", "Estudiante: ${materia.nombre}")
                                 Log.i("httpres", "Estudiante: ${materia}")

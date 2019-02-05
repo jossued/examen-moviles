@@ -274,6 +274,7 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
                             persona.graduado
                         )
 
+                        MateriaHTTP().obtenerPorId(estudianteMostrar.id)
                         intentMostrar.putExtra("estudiante_pasar", estudianteMostrar)
                         contexto.startActivity(intentMostrar)
                         true
