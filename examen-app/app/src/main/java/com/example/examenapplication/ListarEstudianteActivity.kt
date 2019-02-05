@@ -1,9 +1,11 @@
 package com.example.examenapplication
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,9 +20,9 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_listar_estudiante.*
 
 import android.widget.PopupMenu
+import com.tapadoo.alerter.Alerter
+
 //import android.R
-
-
 
 
 class ListarEstudianteActivity : AppCompatActivity() {
@@ -50,7 +52,8 @@ class ListarEstudianteActivity : AppCompatActivity() {
     override fun onCreateContextMenu(
         menu: ContextMenu,
         v: View,
-        menuInfo: ContextMenu.ContextMenuInfo) {
+        menuInfo: ContextMenu.ContextMenuInfo
+    ) {
         super.onCreateContextMenu(menu, v, menuInfo)
 
         val inflater = menuInflater
@@ -89,7 +92,13 @@ class ListarEstudianteActivity : AppCompatActivity() {
     }
 
     fun actualizarUsuario(estudiante: Estudiante) {
-        val estudianteActualizar = EstudianteHttp(estudiante.nombres, estudiante.apellidos, estudiante.fechaNacimiento, estudiante.semestreActual, estudiante.graduado)
+        val estudianteActualizar = EstudianteHttp(
+            estudiante.nombres,
+            estudiante.apellidos,
+            estudiante.fechaNacimiento,
+            estudiante.semestreActual,
+            estudiante.graduado
+        )
         estudianteActualizar.actualizar(estudiante.id)
     }
 
@@ -109,10 +118,9 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 
-
         var nombreTextView: TextView
         var apellidoTextView: TextView
-//        var fechaNacimientoTextView: TextView
+        //        var fechaNacimientoTextView: TextView
         var boton_opciones: Button
 
         init {
@@ -143,8 +151,6 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
 
 
         }
-
-
 
 
     }
@@ -180,31 +186,76 @@ class PersonasAdaptador(val listaPersonas: ArrayList<EstudianteHttp>, private va
             //inflating menu from xml resource
             popup.inflate(R.menu.estudiantes_menu)
 
-            popup.setOnMenuItemClickListener {
-                item ->
+            popup.setOnMenuItemClickListener { item ->
                 when (item.getItemId()) {
                     R.id.editar_estudiante -> {
                         val intentEditar = Intent(contexto, FormularioEstudianteActivity::class.java)
-                        Log.i("paso", "${persona.nombres}, ${persona.apellidos}, ${persona.fechaNacimiento}, ${persona.id}")
+                        Log.i(
+                            "paso",
+                            "${persona.nombres}, ${persona.apellidos}, ${persona.fechaNacimiento}, ${persona.id}"
+                        )
 //                        intentEditar.putExtra("id_usuario", persona.id)
 
-                        val estudianteActualizar = Estudiante(persona.id!!, persona.nombres, persona.apellidos, persona.semestreActual, persona.fechaNacimiento, persona.graduado)
+                        val estudianteActualizar = Estudiante(
+                            persona.id!!,
+                            persona.nombres,
+                            persona.apellidos,
+                            persona.semestreActual,
+                            persona.fechaNacimiento,
+                            persona.graduado
+                        )
 
-                        intentEditar.putExtra("estudiante_pasar",estudianteActualizar)
+                        intentEditar.putExtra("estudiante_pasar", estudianteActualizar)
                         contexto.startActivityForResult(intentEditar, ListarEstudianteActivity.requestCodeActualizar)
                         true
                     }
                     R.id.eliminar_estudiante -> {
-                        EstudianteHttp().eliminar(persona.id)
-                        listaPersonas.removeAt(position)
-                        notifyDataSetChanged()
+                        val builder = AlertDialog.Builder(contexto)
+                        builder
+                            .setMessage("Estas seguro de eliminar el estudiante?")
+                            .setPositiveButton(
+                                "Si, de una"
+                            ) { dialog, which ->
+                                EstudianteHttp().eliminar(persona.id)
+                                Alerter.create(contexto)
+                                    .setText("Estudiante ${persona.nombres} eliminado")
+                                    .show()
+                                listaPersonas.removeAt(position)
+                                notifyDataSetChanged()
+
+                            }
+                            .setNegativeButton(
+                                "No"
+                            ) { dialog, which ->
+                                Alerter.create(contexto)
+                                    .setText("Selecciono que NO")
+                                    .show()
+                            }
+
+
+                        val dialogo = builder.create()
+                        dialogo.show()
+
+
                         true
                     }
-                    R.id.compartir_estudiante ->
-                         true
-                    R.id.listar_materias ->
-                         true
-                    else ->  false
+                    R.id.compartir_estudiante -> {
+                        val texto = persona.nombres
+
+                        val intent = Intent(Intent.ACTION_SEND)
+
+                        intent.type = "text/html"
+
+                        intent.putExtra(Intent.EXTRA_TEXT, texto)
+
+                        contexto.startActivity(intent)
+                        true
+                    }
+                    R.id.listar_materias -> {
+
+                        true
+                    }
+                    else -> false
                 }
             }
 
