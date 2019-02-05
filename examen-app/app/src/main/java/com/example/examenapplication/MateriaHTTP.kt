@@ -25,7 +25,7 @@ class MateriaHTTP(
 
     val url = "http://192.168.100.206:1337/Materia"
 
-    fun crearMateria() {
+    fun crearMateria(idEstudiante: Int?) {
 
         val parametros = listOf(
             "codigoBarra" to codigoBarra,
@@ -34,8 +34,8 @@ class MateriaHTTP(
             "descripcion" to descripcion,
             "activo" to activo,
             "fechaCreacion" to fechaCreacion,
-            "numeroHorasPorSemana" to numeroHorasPorSemana
-//            "idEstudiante" to idEstudiante
+            "numeroHorasPorSemana" to numeroHorasPorSemana,
+            "idEstudiante" to idEstudiante
         )
 
         Log.i("httpres", parametros.toString())

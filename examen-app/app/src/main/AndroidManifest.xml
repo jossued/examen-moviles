@@ -20,10 +20,6 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <activity android:name=".ListarMateriaActivity">
-        </activity>
-        <activity android:name=".ListarEstudianteActivity">
-        </activity>
 
         <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -38,6 +34,13 @@
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/file_paths"/>
         </provider>
+
+        <activity android:name=".FormularioMateriaActivity">
+        </activity>
+        <activity android:name=".ListarMateriaActivity">
+        </activity>
+        <activity android:name=".ListarEstudianteActivity">
+        </activity>
 
         <activity android:name=".FormularioEstudianteActivity">
         </activity>
